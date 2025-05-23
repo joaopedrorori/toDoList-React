@@ -1,35 +1,79 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+import Todo from "./components/Todo";
+import TodoForm from "./components/TodoForm";
+import Search from "./components/Search";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [todos, setTodos] = useState([
+    {
+      id: 1,
+      text: "criar funcionalidade x no sistema",
+      category: "Trabalho",
+      isCompleted: false,
+    },
+    {
+      id: 2,
+      text: "Ir pra academia",
+      category: "Pessoal",
+      isCompleted: false,
+    },
+    {
+      id: 3,
+      text: "Estudar React",
+      category: "Estudos",
+      isCompleted: false,
+    },
+  ]);
+  const [search, setSearch] = useState("");
+
+  const addTodo = (text, category) => {
+    const newTodos = [
+      ...todos,
+      {
+        id: todos.length + 1,
+        text,
+        category,
+        isCompleted: false,
+      },
+    ];
+    setTodos(newTodos);
+  };
+
+  const removeTodo = (id) => {
+    const newTodos = [...todos];
+    const filteredTodos = newTodos.filter((todo) =>
+      todo.id !== id ? todo : null
+    );
+    setTodos(filteredTodos);
+  };
+
+  const completeTodo = (id) => {
+    const newTodos = [...todos];
+    newTodos.map((todo) =>
+      todo.id === id ? (todo.isCompleted = !todo.isCompleted) : todo
+    );
+    setTodos(newTodos);
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="app">
+      <h1>Lista de Tarefas</h1>
+      <Search search={search} setSearch={setSearch} />
+      <div className="todo-list">
+        {todos.map((todo) => (
+          <Todo
+            todo={todo}
+            removeTodo={removeTodo}
+            completeTodo={completeTodo}
+            key={todo.id}
+            id={todo.id}
+          />
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <TodoForm addTodo={addTodo} />
+    </div>
+  );
 }
 
-export default App
+export default App;
